@@ -31,12 +31,12 @@ Metronome::Metronome(juce::AudioProcessorValueTreeState* _apvts)
 
     juce::MemoryInputStream inputStream2(BinaryData::rimshot_high_wav, BinaryData::rimshot_high_wavSize, false);
     juce::WavAudioFormat wavFormat2;
-    juce::AudioFormatReader* formatReader2 = wavFormat.createReaderFor(&inputStream2, false);
+    juce::AudioFormatReader* formatReader2 = wavFormat2.createReaderFor(&inputStream2, false);
     rimShotHigh.reset(new juce::AudioFormatReaderSource(formatReader2, true));
     
     juce::MemoryInputStream inputStream3(BinaryData::rimshot_sub_wav, BinaryData::rimshot_sub_wavSize, false);
     juce::WavAudioFormat wavFormat3;
-    juce::AudioFormatReader* formatReader3 = wavFormat.createReaderFor(&inputStream3, false);
+    juce::AudioFormatReader* formatReader3 = wavFormat3.createReaderFor(&inputStream3, false);
     rimShotSub.reset(new juce::AudioFormatReaderSource(formatReader3, true));
     
 }

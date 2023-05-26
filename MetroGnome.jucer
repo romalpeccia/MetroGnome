@@ -11,10 +11,6 @@
       <FILE id="nLc0hj" name="rimshot_sub.wav" compile="0" resource="1" file="Samples/rimshot_sub.wav"/>
       <FILE id="fnmiPc" name="Utilities.cpp" compile="1" resource="0" file="Source/Utilities.cpp"/>
       <FILE id="n45m6i" name="Utilities.h" compile="0" resource="0" file="Source/Utilities.h"/>
-      <FILE id="znq21E" name="PolyRhythmMachine.cpp" compile="1" resource="0"
-            file="Source/PolyRhythmMachine.cpp"/>
-      <FILE id="IY3ewK" name="PolyRhythmMachine.h" compile="0" resource="0"
-            file="Source/PolyRhythmMachine.h"/>
       <FILE id="wRs1N7" name="PolyRhythmMetronome.cpp" compile="1" resource="0"
             file="Source/PolyRhythmMetronome.cpp"/>
       <FILE id="r2Cn8G" name="PolyRhythmMetronome.h" compile="0" resource="0"

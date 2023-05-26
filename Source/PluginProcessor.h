@@ -11,7 +11,6 @@
 #include <JuceHeader.h>
 #include "Metronome.h"
 #include "PolyRhythmMetronome.h"
-#include "PolyRhythmMachine.h"
 #include "Utilities.h"
 
 
@@ -68,8 +67,6 @@ public:
     juce::AudioProcessorValueTreeState apvts{ *this, nullptr, "Parameters", createParameterLayout() };
     Metronome metronome{ &apvts };
     PolyRhythmMetronome polyRhythmMetronome{ &apvts };
-    PolyRhythmMachine polyRhythmMachine{ &apvts };
-
 
 
 private:
