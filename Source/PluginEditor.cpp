@@ -151,11 +151,15 @@ void MetroGnomeAudioProcessorEditor::paint(juce::Graphics& g)
     g.fillAll(juce::Colours::black);
     g.drawImageAt(logo, 0, 0);
 
-    auto mode = audioProcessor.apvts.getRawParameterValue("MODE")->load();
-    if (audioProcessor.apvts.getRawParameterValue("HOST_CONNECTED")->load()){
+
+    if (audioProcessor.apvts.getRawParameterValue("DAW_CONNECTED")->load() == true){
+        DBG("TEST");
         bpmSlider.setEnabled(false);
+        bpmSlider.setValue(audioProcessor.apvts.getRawParameterValue("BPM")->load());
     }
 
+
+    auto mode = audioProcessor.apvts.getRawParameterValue("MODE")->load();
     if (mode == 1) {
         paintPolyRhythmMetronomeMode(g);
     }

@@ -171,16 +171,11 @@ void PolyRhythmMetronome::getNextAudioBlock(juce::AudioBuffer<float>& buffer, ju
                 }
             }
         }
-       // DBG(to_string(rhythm1Counter) + ";" + to_string(rhythm2Counter));
-
-
-
 
     }
     else if (rhythm1Flag)
     {
         rhythm1Counter += 1;
-        //DBG(to_string(rhythm1Counter) + ";" + to_string(rhythm2Counter));
         if (apvts->getRawParameterValue("RHYTHM1." + to_string(rhythm1Counter) + "_TOGGLE")->load() == true) {
 
             const auto timeToStartPlaying = rhythm1Interval - rhythm1SamplesProcessed;
@@ -198,7 +193,6 @@ void PolyRhythmMetronome::getNextAudioBlock(juce::AudioBuffer<float>& buffer, ju
     else if (rhythm2Flag )
     {
         rhythm2Counter += 1;
-        //DBG(to_string(rhythm1Counter) + ";" + to_string(rhythm2Counter));
         if (apvts->getRawParameterValue("RHYTHM2." + to_string(rhythm2Counter) + "_TOGGLE")->load() == true) {
 
             const auto timeToStartPlaying = rhythm2Interval - rhythm2SamplesProcessed ;
@@ -214,7 +208,7 @@ void PolyRhythmMetronome::getNextAudioBlock(juce::AudioBuffer<float>& buffer, ju
         }
     }
 
-    if (totalSamples >= samplesPerBar) {
+    if (totalSamples >= samplesPerBar && !isDawPlaying) {
         totalSamples = totalSamples - samplesPerBar;
     }
 

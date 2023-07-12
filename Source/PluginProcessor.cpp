@@ -51,20 +51,34 @@ void MetroGnomeAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
    
     auto positionInfo = getPlayHead()->getPosition();
     if (positionInfo) {
-        apvts.getRawParameterValue("DAW_CONNECTED")->store(true);
+
         auto bpmInfo = (*positionInfo).getBpm();
         auto timeInfo = (*positionInfo).getTimeInSamples();
         auto isPlayingInfo = (*positionInfo).getIsPlaying();
-        if (bpmInfo && timeInfo && isPlayingInfo) {
-            apvts.getRawParameterValue("BPM")->store(*bpmInfo);
-            apvts.getRawParameterValue("DAW_SAMPLES_ELAPSED")->store(*timeInfo);
-            apvts.getRawParameterValue("DAW_PLAYING")->store(isPlayingInfo);
+        if (bpmInfo) {
+            apvts.getRawParameterValue("DAW_CONNECTED")->store(true);
+            if (apvts.getRawParameterValue("BPM")->load() != *bpmInfo) {
+                apvts.getRawParameterValue("BPM")->store(*bpmInfo);
+                metronome.resetParams();
+                metronome.resetAll();
+                polyRhythmMetronome.resetAll();
+            }
+            if (timeInfo && isPlayingInfo) {
+                apvts.getRawParameterValue("DAW_SAMPLES_ELAPSED")->store(*timeInfo);
+                bool isDawPlaying = apvts.getRawParameterValue("DAW_PLAYING")->load();
+                if (isDawPlaying != isPlayingInfo) {
+                    apvts.getRawParameterValue("DAW_PLAYING")->store(isPlayingInfo);
+                    metronome.resetParams();
+                    metronome.resetAll();
+                    polyRhythmMetronome.resetAll();
+                }
+            }
         }
         else {
             apvts.getRawParameterValue("DAW_CONNECTED")->store(false);
         }
-
     }
+
    
     midiMessages.clear();
     auto mode = apvts.getRawParameterValue("MODE")->load();
@@ -88,7 +102,6 @@ juce::AudioProcessorValueTreeState::ParameterLayout MetroGnomeAudioProcessor::cr
 
 
     layout.add(std::make_unique<juce::AudioParameterBool>("ON/OFF", "On/Off", false));
-    layout.add(std::make_unique<juce::AudioParameterBool>("HOST_CONNECTED", "Host Connected", false));
     layout.add(std::make_unique<juce::AudioParameterFloat>("BPM", "bpm", juce::NormalisableRange<float>(1.f, 300.f, 0.1f, 0.25f), 120.f));
     layout.add(std::make_unique<juce::AudioParameterInt>("SUBDIVISION", "Subdivision", 1, MAX_LENGTH, 1));
     layout.add(std::make_unique<juce::AudioParameterInt>("NUMERATOR", "Numerator", 1, MAX_LENGTH, 4));

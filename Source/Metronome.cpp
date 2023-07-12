@@ -75,6 +75,7 @@ void Metronome::getNextAudioBlock(juce::AudioBuffer<float>& buffer)
     resetParams();
     bool isDawConnected = apvts->getRawParameterValue("DAW_CONNECTED")->load();
     bool isDawPlaying = apvts->getRawParameterValue("DAW_PLAYING")->load();
+
     //TODO: fix bug instead of this bandaid for sync issues (maybe this has been fixed with commit 1957bb6)
     if (subdivisionCounter > subdivisions)
         subdivisionCounter = subdivisions;
@@ -150,7 +151,7 @@ void Metronome::getNextAudioBlock(juce::AudioBuffer<float>& buffer)
         rimShotLow->getNextAudioBlock(temp);
     }
     */
-     if (totalSamples >= samplesPerBar) {
+     if (totalSamples >= samplesPerBar && !isDawPlaying) {
          totalSamples = totalSamples - samplesPerBar;
      }
 }
@@ -159,9 +160,8 @@ void Metronome::getNextAudioBlock(juce::AudioBuffer<float>& buffer)
 
 void Metronome::resetAll() 
 {   //this should be called whenever the metronome is stopped
-    resetParams();
     totalSamples = 0;
-    beatCounter = numerator;
+    beatCounter = 0;
     subdivisionCounter = subdivisions;
     samplesProcessed = 0;
     subSamplesProcessed = 0;
