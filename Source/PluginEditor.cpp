@@ -69,6 +69,7 @@ MetroGnomeAudioProcessorEditor::MetroGnomeAudioProcessorEditor(MetroGnomeAudioPr
 
     //initialize the polyrhythm Metronome buttons
     for (int i = 0; i < MAX_LENGTH; i++) {
+        Rhythm1Buttons[i].setToggleState(true, juce::NotificationType::sendNotification);
         Rhythm1Buttons[i].onClick = [this, i]() {
             if (audioProcessor.apvts.getRawParameterValue("RHYTHM1." + to_string(i) + "_TOGGLE")->load() == true) {
                 audioProcessor.apvts.getRawParameterValue("RHYTHM1." + to_string(i) + "_TOGGLE")->store(false);
@@ -77,6 +78,7 @@ MetroGnomeAudioProcessorEditor::MetroGnomeAudioProcessorEditor(MetroGnomeAudioPr
                 audioProcessor.apvts.getRawParameterValue("RHYTHM1." + to_string(i) + "_TOGGLE")->store(true);
             }
         };
+        Rhythm2Buttons[i].setToggleState(true, juce::NotificationType::sendNotification);
         Rhythm2Buttons[i].onClick = [this, i]() {
             if (audioProcessor.apvts.getRawParameterValue("RHYTHM2." + to_string(i) + "_TOGGLE")->load() == true) {
                 audioProcessor.apvts.getRawParameterValue("RHYTHM2." + to_string(i) + "_TOGGLE")->store(false);

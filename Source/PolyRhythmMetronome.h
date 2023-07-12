@@ -47,6 +47,7 @@ private:
     //overall logic variables
     int totalSamples = 0; //total samples since start time
     double sampleRate = 0; //sampleRate from app, usually 44100
+    double samplesPerBar;  //= 4 * (60.0 / bpm) * sampleRate;
 
     //rhythm1 logic variables
     int rhythm1Interval = 0;

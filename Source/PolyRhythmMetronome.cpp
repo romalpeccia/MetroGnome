@@ -96,16 +96,14 @@ void PolyRhythmMetronome::getNextAudioBlock(juce::AudioBuffer<float>& buffer, ju
 
 
 
+
     if (rhythm1Counter >= rhythm1Value )
     {
-        //TODO why reset totalsamples?
         rhythm1Counter = 0;
-        totalSamples = 0;
     }
     if (rhythm2Counter >= rhythm2Value )
     {
         rhythm2Counter = 0;
-        totalSamples = 0;
     }
 
 
@@ -207,6 +205,11 @@ void PolyRhythmMetronome::getNextAudioBlock(juce::AudioBuffer<float>& buffer, ju
             }
         }
     }
+
+    if (totalSamples >= samplesPerBar) {
+        totalSamples = totalSamples - samplesPerBar;
+    }
+
 }
 
 void PolyRhythmMetronome::handleNoteTrigger(juce::MidiBuffer& midiBuffer, int noteNumber)
@@ -253,9 +256,9 @@ void PolyRhythmMetronome::resetParams()
 
 
     bpm = apvts->getRawParameterValue("BPM")->load();
-    //4 * because we have 4 beats in a bar
-    rhythm1Interval = 4 * ((60.0 / bpm) * sampleRate) / rhythm1Value;
-    rhythm2Interval = 4 * ((60.0 / bpm) * sampleRate) / rhythm2Value;
+    samplesPerBar = 4 * ((60.0 / bpm) * sampleRate);    //4 * because we have 4 beats in a bar
+    rhythm1Interval = samplesPerBar / rhythm1Value;
+    rhythm2Interval = samplesPerBar / rhythm2Value;
     ///TODO  assumes 4/4 time, a time signature parameter could be interesting
 
 }

@@ -144,7 +144,9 @@ void Metronome::getNextAudioBlock(juce::AudioBuffer<float>& buffer)
         rimShotLow->getNextAudioBlock(temp);
     }
     */
- 
+     if (totalSamples >= samplesPerBar) {
+         totalSamples = totalSamples - samplesPerBar;
+     }
 }
 
 
@@ -162,11 +164,10 @@ void Metronome::resetAll()
 
 void Metronome::resetParams()
 {  //this should be called whenever the processor changes a parameter (which should only happen when the user interacts with the GUI)
-    //TODO: check if loading all of these is expensive, maybe we can only load the changed param
     numerator = apvts->getRawParameterValue("NUMERATOR")->load();
     subdivisions = apvts->getRawParameterValue("SUBDIVISION")->load();
     bpm = apvts->getRawParameterValue("BPM")->load();
     beatInterval = (60.0 / bpm) * sampleRate;
     subInterval = beatInterval / subdivisions;
-
+    samplesPerBar = 4 * ((60.0 / bpm) * sampleRate);    //4 * because we have 4 beats in a bar
 }

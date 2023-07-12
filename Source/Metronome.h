@@ -51,6 +51,7 @@ class Metronome
        //User params, which change when the sliders are moved
         int numerator = 4; //numerator of time signature
         int subdivisions = 1; // amount of subdivisions, 1 = turns off subdivision logic 
+        int samplesPerBar;
         double bpm = 60;
 
         //overall logic variables
