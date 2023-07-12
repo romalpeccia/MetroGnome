@@ -49,14 +49,21 @@ void MetroGnomeAudioProcessor::releaseResources()
 void MetroGnomeAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
    
-    //check if the user is in a recognized DAW or other host
-    if (juce::String(pluginHostType.getHostDescription()) != "Unknown") {
-        //apvts.getRawParameterValue("HOST_CONNECTED")->store(true);
-        /*
-        if (double bpm = playHead->getPosition()->getBpm() != 0) {
-            
+    auto positionInfo = getPlayHead()->getPosition();
+    if (positionInfo) {
+        apvts.getRawParameterValue("DAW_CONNECTED")->store(true);
+        auto bpmInfo = (*positionInfo).getBpm();
+        auto timeInfo = (*positionInfo).getTimeInSamples();
+        auto isPlayingInfo = (*positionInfo).getIsPlaying();
+        if (bpmInfo && timeInfo && isPlayingInfo) {
+            apvts.getRawParameterValue("BPM")->store(*bpmInfo);
+            apvts.getRawParameterValue("DAW_SAMPLES_ELAPSED")->store(*timeInfo);
+            apvts.getRawParameterValue("DAW_PLAYING")->store(isPlayingInfo);
         }
-        */
+        else {
+            apvts.getRawParameterValue("DAW_CONNECTED")->store(false);
+        }
+
     }
    
     midiMessages.clear();
@@ -85,6 +92,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout MetroGnomeAudioProcessor::cr
     layout.add(std::make_unique<juce::AudioParameterFloat>("BPM", "bpm", juce::NormalisableRange<float>(1.f, 300.f, 0.1f, 0.25f), 120.f));
     layout.add(std::make_unique<juce::AudioParameterInt>("SUBDIVISION", "Subdivision", 1, MAX_LENGTH, 1));
     layout.add(std::make_unique<juce::AudioParameterInt>("NUMERATOR", "Numerator", 1, MAX_LENGTH, 4));
+
+    layout.add(std::make_unique<juce::AudioParameterBool>("DAW_CONNECTED", "DAW Connected", false));
+    layout.add(std::make_unique<juce::AudioParameterBool>("DAW_PLAYING", "DAW Playing", false));
+    layout.add(std::make_unique<juce::AudioParameterInt>("DAW_SAMPLES_ELAPSED", "samples elapsed", 0, 2147483647, 0));
 
 
     juce::StringArray stringArray;

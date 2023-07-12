@@ -81,11 +81,19 @@ void PolyRhythmMetronome::prepareToPlay(double _sampleRate, int samplesPerBlock)
 void PolyRhythmMetronome::getNextAudioBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiBuffer)
 {   
 
+    bool isDawConnected = apvts->getRawParameterValue("DAW_CONNECTED")->load();
+    bool isDawPlaying = apvts->getRawParameterValue("DAW_PLAYING")->load();
 
     resetParams();
     auto audioSourceChannelInfo = juce::AudioSourceChannelInfo(buffer);
-    auto bufferSize = buffer.getNumSamples();
-    totalSamples += bufferSize;
+    auto bufferSize = buffer.getNumSamples(); //usually 16, 32, 64... 1024...
+    if (!isDawConnected && !isDawPlaying) {
+        totalSamples += bufferSize;
+    }
+    else {
+        totalSamples = ((int)apvts->getRawParameterValue("DAW_SAMPLES_ELAPSED")->load() % (int)samplesPerBar) + (int)bufferSize;
+    }
+
     rhythm1SamplesProcessed = totalSamples % rhythm1Interval;
     rhythm2SamplesProcessed = totalSamples % rhythm2Interval;
 
@@ -93,9 +101,6 @@ void PolyRhythmMetronome::getNextAudioBlock(juce::AudioBuffer<float>& buffer, ju
     bool rhythm1Flag = (rhythm1SamplesProcessed + bufferSize >= rhythm1Interval && rhythm1Value > 1);
     bool rhythm2Flag = (rhythm2SamplesProcessed + bufferSize >= rhythm2Interval && rhythm2Value > 1);
    
-
-
-
 
     if (rhythm1Counter >= rhythm1Value )
     {
@@ -126,40 +131,43 @@ void PolyRhythmMetronome::getNextAudioBlock(juce::AudioBuffer<float>& buffer, ju
 
 
         if (apvts->getRawParameterValue("RHYTHM1." + to_string(ID1) + "_TOGGLE")->load() == true && apvts->getRawParameterValue("RHYTHM2." + to_string(ID2) + "_TOGGLE")->load() == true) {
-
+            handleNoteTrigger(midiBuffer, RHYTHM_1_MIDI_VALUE);
+            handleNoteTrigger(midiBuffer, RHYTHM_2_MIDI_VALUE);
             rimShotHigh->setNextReadPosition(0); //reset sample to beginning
             for (auto samplenum = 0; samplenum < bufferSize + 1; samplenum++)
             {
                 if (samplenum == timeToStartPlaying)
                 {
                     rimShotHigh->getNextAudioBlock(audioSourceChannelInfo);
-                    handleNoteTrigger(midiBuffer, RHYTHM_1_MIDI_VALUE);
-                    handleNoteTrigger(midiBuffer, RHYTHM_2_MIDI_VALUE);
+
                 }
             }
+
         }
         else if (apvts->getRawParameterValue("RHYTHM1." + to_string(ID1) + "_TOGGLE")->load() == true) {
 
+            handleNoteTrigger(midiBuffer, RHYTHM_1_MIDI_VALUE);
             rimShotLow->setNextReadPosition(0); //reset sample to beginning
             for (auto samplenum = 0; samplenum < bufferSize + 1; samplenum++)
             {
                 if (samplenum == timeToStartPlaying)
                 {
                     rimShotLow->getNextAudioBlock(audioSourceChannelInfo);
-                    handleNoteTrigger(midiBuffer, RHYTHM_1_MIDI_VALUE);
+
                 }
             }
+
         }
         else if (apvts->getRawParameterValue("RHYTHM2." + to_string(ID2) + "_TOGGLE")->load() == true) {
 
-
+            handleNoteTrigger(midiBuffer, RHYTHM_2_MIDI_VALUE);
             rimShotSub->setNextReadPosition(0); //reset sample to beginning
             for (auto samplenum = 0; samplenum < bufferSize + 1; samplenum++)
             { 
                 if (samplenum == timeToStartPlaying)
                 {
                     rimShotSub->getNextAudioBlock(audioSourceChannelInfo);
-                    handleNoteTrigger(midiBuffer, RHYTHM_2_MIDI_VALUE);
+
                 }
             }
         }
@@ -193,7 +201,7 @@ void PolyRhythmMetronome::getNextAudioBlock(juce::AudioBuffer<float>& buffer, ju
         //DBG(to_string(rhythm1Counter) + ";" + to_string(rhythm2Counter));
         if (apvts->getRawParameterValue("RHYTHM2." + to_string(rhythm2Counter) + "_TOGGLE")->load() == true) {
 
-            const auto timeToStartPlaying = rhythm2Interval - rhythm2SamplesProcessed;
+            const auto timeToStartPlaying = rhythm2Interval - rhythm2SamplesProcessed ;
             rimShotSub->setNextReadPosition(0); //reset sample to beginning
             for (auto samplenum = 0; samplenum < bufferSize + 1; samplenum++)
             { 

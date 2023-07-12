@@ -73,15 +73,21 @@ void Metronome::getNextAudioBlock(juce::AudioBuffer<float>& buffer)
  //TODO cache calculations for less processing?
    
     resetParams();
-
-    //TODO fix bug instead of this bandaid for sync issues
+    bool isDawConnected = apvts->getRawParameterValue("DAW_CONNECTED")->load();
+    bool isDawPlaying = apvts->getRawParameterValue("DAW_PLAYING")->load();
+    //TODO: fix bug instead of this bandaid for sync issues (maybe this has been fixed with commit 1957bb6)
     if (subdivisionCounter > subdivisions)
         subdivisionCounter = subdivisions;
 
     //temp wrapper because <juce::AudioFormatReaderSource>->getNextAudioBlock expects an AudioSourceChannelInfoObject
     auto audiosourcechannelinfo = juce::AudioSourceChannelInfo(buffer);
     auto bufferSize = buffer.getNumSamples();
-    totalSamples += bufferSize;
+    if (!isDawConnected && !isDawPlaying) {
+        totalSamples += bufferSize;
+    }
+    else {
+        totalSamples = ((int)apvts->getRawParameterValue("DAW_SAMPLES_ELAPSED")->load() % (int)samplesPerBar) + (int)bufferSize;
+    }
     samplesProcessed = totalSamples % beatInterval;
     subSamplesProcessed = totalSamples % subInterval;
 
