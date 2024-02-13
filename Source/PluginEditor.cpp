@@ -15,8 +15,8 @@ MetroGnomeAudioProcessorEditor::MetroGnomeAudioProcessorEditor(MetroGnomeAudioPr
 
     ,
     bpmSlider(*audioProcessor.apvts.getParameter("BPM"), "bpm"),
-    subdivisionSlider(*audioProcessor.apvts.getParameter("SUBDIVISION"), "subdivisions"),
-    numeratorSlider(*audioProcessor.apvts.getParameter("NUMERATOR"), "numerator"),
+    subdivisionSlider(*audioProcessor.apvts.getParameter("SUBDIVISION"), ""),
+    numeratorSlider(*audioProcessor.apvts.getParameter("NUMERATOR"), ""),
 
     bpmAttachment(audioProcessor.apvts, "BPM", bpmSlider),
     subdivisionAttachment(audioProcessor.apvts, "SUBDIVISION", subdivisionSlider),
